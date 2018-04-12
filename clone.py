@@ -37,6 +37,10 @@ def generator(samples, batch_size=32):
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
+                center_image_flipped = cv2.flip(center_image, 1)
+                center_angle_flipped = -1.0*center_angle
+                images.append(center_image_flipped)
+                angles.append(center_angle_flipped)
 
             # trim image to only see section with road
             X_train = np.array(images)
