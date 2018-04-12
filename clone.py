@@ -86,20 +86,34 @@ model.add(Lambda(lambda x: x / 255 - 0.5,
                  input_shape=(row, col, ch),
                  output_shape=(row, col, ch)))
 model.add(Cropping2D(cropping=((70, 25), (0, 0))))
-model.add(Convolution2D(6, 5, 5))
-model.add(MaxPooling2D())
-model.add(Activation('relu'))
-model.add(Convolution2D(6, 5, 5))
-model.add(MaxPooling2D())
-model.add(Activation('relu'))
+
+# NVIDIA model
+model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
+model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
+model.add(Convolution2D(48,5,5,activation="relu"))
+model.add(Convolution2D(64,3,3,activation="relu"))
+model.add(Convolution2D(64,3,3,activation="relu"))
 model.add(Flatten())
-model.add(Dense(120))
-model.add(Dense(84))
+model.add(Dense(100))
+model.add(Dense(50))
+model.add(Dense(10))
 model.add(Dense(1))
+
+# LeNet model
+#model.add(Convolution2D(6, 5, 5))
+#model.add(MaxPooling2D())
+#model.add(Activation('relu'))
+#model.add(Convolution2D(6, 5, 5))
+#model.add(MaxPooling2D())
+#model.add(Activation('relu'))
+#model.add(Flatten())
+#model.add(Dense(120))
+#model.add(Dense(84))
+#model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 model.fit_generator(train_generator, samples_per_epoch= \
                     len(train_samples), validation_data=validation_generator, \
-                    nb_val_samples=len(validation_samples), nb_epoch=5)
+                    nb_val_samples=len(validation_samples), nb_epoch=4)
 
 model.save('model.h5')
