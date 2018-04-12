@@ -32,15 +32,42 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             for batch_sample in batch_samples:
-                name = 'data/IMG/'+batch_sample[0].split('/')[-1]
-                center_image = cv2.imread(name)
+                # all 3 images and steering angles
+                center_image_name = 'data/IMG/'+batch_sample[0].split('/')[-1]
+                center_image = cv2.imread(center_image_name)
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
+
+                correction = 0.4
+                left_angle = center_angle + correction
+                right_angle = center_angle - correction
+
+                left_image_name = 'data/IMG/'+batch_sample[1].split('/')[-1]
+                left_image = cv2.imread(left_image_name)
+                images.append(left_image)
+                angles.append(left_angle)
+
+                right_image_name = 'data/IMG/'+batch_sample[2].split('/')[-1]
+                right_image = cv2.imread(right_image_name)
+                images.append(right_image)
+                angles.append(right_angle)
+
+                # flipped versions of the original 3 images and steering angles
                 center_image_flipped = cv2.flip(center_image, 1)
                 center_angle_flipped = -1.0*center_angle
                 images.append(center_image_flipped)
                 angles.append(center_angle_flipped)
+
+                left_image_flipped = cv2.flip(left_image, 1)
+                left_angle_flipped = -1.0*left_angle
+                images.append(left_image_flipped)
+                angles.append(left_angle_flipped)
+
+                right_image_flipped = cv2.flip(right_image, 1)
+                right_angle_flipped = -1.0*right_angle
+                images.append(right_image_flipped)
+                angles.append(right_angle_flipped)
 
             # trim image to only see section with road
             X_train = np.array(images)
@@ -73,6 +100,6 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 model.fit_generator(train_generator, samples_per_epoch= \
                     len(train_samples), validation_data=validation_generator, \
-                    nb_val_samples=len(validation_samples), nb_epoch=3)
+                    nb_val_samples=len(validation_samples), nb_epoch=5)
 
 model.save('model.h5')
